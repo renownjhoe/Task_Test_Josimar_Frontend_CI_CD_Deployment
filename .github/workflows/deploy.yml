@@ -69,42 +69,24 @@ jobs:
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/php-app:${{ env.COMMIT_ID }}
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/php-app:latest
 
-      # Step 8: SSH into server and deploy new containers
-      - name: Deploy New Containers
+
+      - name: Deploy to EC2
         run: |
-            ssh -T -i private_key.pem ${{ secrets.EC2_USERNAME }}@${{ secrets.EC2_HOST }} << 'EOF'
-              set -x
-              cd /home/ubuntu/Task_Test_Josimar_Frontend_CI_CD_Deployment
-              git init || true
-              git remote add origin https://github.com/renownjhoe/Task_Test_Josimar_Frontend_CI_CD_Deployment.git || true
-              git fetch || true
-              git checkout main || true
-              git pull origin main || true
-
-              docker network create app-network || true # Force create
-              docker compose version
-              docker compose config
-              docker compose up -d --build || { echo "docker compose up failed"; exit 1; }
-              docker network ls
-            EOF
-
-      # - name: Deploy to EC2
-      #   run: |
-      #     ssh -T -i private_key.pem ${{ env.SERVER_USER }}@${{ env.SERVER_HOST }} << 'EOF'
-      #       set -x
-      #       cd /home/ubuntu/Task_Test_Josimar_Frontend_CI_CD_Deployment || mkdir -p /home/ubuntu/Task_Test_Josimar_Frontend_CI_CD_Deployment
-      #       cd /home/ubuntu/Task_Test_Josimar_Frontend_CI_CD_Deployment
-      #       git init || true
-      #       git remote add origin https://github.com/renownjhoe/Task_Test_Josimar_Frontend_CI_CD_Deployment.git || true
-      #       git fetch || true
-      #       git checkout main || true
-      #       git pull origin main || true
-      #       docker compose down || true
-      #       docker compose up -d || { echo "docker compose up failed"; exit 1; }
-      #       docker network ls
-      #       docker network inspect app-network
-      #       docker ps
-      #     EOF
+          ssh -T -i private_key.pem ${{ env.SERVER_USER }}@${{ env.SERVER_HOST }} << 'EOF'
+            set -x
+            cd /home/ubuntu/Task_Test_Frontend_CI_CD_Deployment || mkdir -p /home/ubuntu/Task_Test_Frontend_CI_CD_Deployment
+            cd /home/ubuntu/Task_Test_Frontend_CI_CD_Deployment
+            git init || true
+            git remote add origin https://github.com/renownjhoe/Task_Test_Josimar_Frontend_CI_CD_Deployment.git || true
+            git fetch || true
+            git checkout main || true
+            git pull origin main || true
+            docker compose down || true
+            docker compose up -d || { echo "docker compose up failed"; exit 1; }
+            docker network ls
+            docker network inspect app-network
+            docker ps
+          EOF
 
       - name: Clean up SSH private key
         run: |
