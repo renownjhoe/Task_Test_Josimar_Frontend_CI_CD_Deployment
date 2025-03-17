@@ -1,6 +1,6 @@
 services:
   react-app:
-    image: ${{ secrets.DOCKERHUB_USERNAME }}/react-app:${{ env.COMMIT_ID }}
+    image: ${DOCKERHUB_USERNAME}/react-app:${COMMIT_ID}
     ports:
       - "80:80"
     networks:
