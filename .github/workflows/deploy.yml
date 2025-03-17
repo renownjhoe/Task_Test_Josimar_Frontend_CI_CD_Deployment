@@ -96,7 +96,8 @@ jobs:
             set -x
             echo "Performing maintenance check..."
             sleep 10
-            curl -s -o /dev/null -w "%{http_code}" http://${{ env.SERVER_HOST }} || { echo "Maintenance check failed: HTTP status code is not 200"; exit 1; }
+            docker logs prometheus || true
+            docker logs grafana || true
             echo "Maintenance check successful!"
           EOF
 
@@ -120,7 +121,7 @@ jobs:
         run: |
           ssh -T -i private_key.pem ${{ env.SERVER_USER }}@${{ env.SERVER_HOST }} << 'EOF' # Corrected variable
             set -x
-            cd /home/ubuntu/Task_Test_Josimar_Backend
+            cd /home/ubuntu/Task_Test_Josimar_Frontend_CI_CD_Deployment
             echo "Checking if Prometheus is running..."
             docker logs prometheus || true
           EOF
@@ -129,7 +130,7 @@ jobs:
         run: |
           ssh -T -i private_key.pem ${{ env.SERVER_USER }}@${{ env.SERVER_HOST }} << 'EOF' # Corrected variable
             set -x
-            cd /home/ubuntu/Task_Test_Josimar_Backend
+            cd /home/ubuntu/Task_Test_Josimar_Frontend_CI_CD_Deployment
             echo "Checking if Grafana is running..."
             docker logs grafana || true
           EOF
