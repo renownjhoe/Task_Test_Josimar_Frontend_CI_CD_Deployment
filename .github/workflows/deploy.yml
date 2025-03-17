@@ -109,7 +109,7 @@ jobs:
       - name: Add server public key to known_hosts
         run: |
           mkdir -p ~/.ssh
-          ssh-keyscan -H ${{ env.SERVER_HOST }} >> ~/.ssh/known_hosts # Corrected variable
+          ssh-keyscan -H ${{ env.SERVER_HOST }} >> ~/.ssh/known_hosts
           chmod 644 ~/.ssh/known_hosts
 
       - name: Set up SSH key
@@ -119,7 +119,7 @@ jobs:
 
       - name: Check Prometheus Service
         run: |
-          ssh -T -i private_key.pem ${{ env.SERVER_USER }}@${{ env.SERVER_HOST }} << 'EOF' # Corrected variable
+          ssh -T -i private_key.pem ${{ env.SERVER_USER }}@${{ env.SERVER_HOST }} << 'EOF'
             set -x
             cd /home/ubuntu/Task_Test_Josimar_Frontend_CI_CD_Deployment
             echo "Checking if Prometheus is running..."
@@ -128,7 +128,7 @@ jobs:
 
       - name: Check Grafana Service
         run: |
-          ssh -T -i private_key.pem ${{ env.SERVER_USER }}@${{ env.SERVER_HOST }} << 'EOF' # Corrected variable
+          ssh -T -i private_key.pem ${{ env.SERVER_USER }}@${{ env.SERVER_HOST }} << 'EOF'
             set -x
             cd /home/ubuntu/Task_Test_Josimar_Frontend_CI_CD_Deployment
             echo "Checking if Grafana is running..."
