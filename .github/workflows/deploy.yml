@@ -45,6 +45,7 @@ jobs:
         run: |
           ssh -T -i private_key.pem ${{ secrets.EC2_USERNAME }}@${{ secrets.EC2_HOST }} << 'EOF'
             set -x
+            export DOCKERHUB_USERNAME="${{ secrets.DOCKERHUB_USERNAME }}"
             export COMMIT_ID="${{ github.sha }}"
             cd /home/ubuntu/react-app || mkdir -p /home/ubuntu/react-app
             cd /home/ubuntu/react-app
