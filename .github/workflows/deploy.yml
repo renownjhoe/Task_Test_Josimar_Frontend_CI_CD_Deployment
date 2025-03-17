@@ -69,9 +69,10 @@ jobs:
             ssh -T -i private_key.pem ${{ env.SERVER_USER }}@${{ env.SERVER_HOST }} << EOF
               set -x
               export DOCKER_IMAGE="${{ env.IMAGE_NAME }}:${{ env.COMMIT_ID }}"
-
+              
               cd /home/ubuntu/react-app || mkdir -p /home/ubuntu/react-app
               cd /home/ubuntu/react-app
+              
               cd /home/ubuntu/Task_Test_Josimar_Frontend_CI_CD_Deployment || mkdir -p /home/ubuntu/Task_Test_Josimar_Frontend_CI_CD_Deployment
               cd /home/ubuntu/Task_Test_Josimar_Frontend_CI_CD_Deployment
 
@@ -80,13 +81,12 @@ jobs:
               git fetch || true
               git checkout main || true
               git pull origin main || true
-
+              
+              # Run with environment variable
               docker compose down || true
-              docker compose up -d --build || { echo "docker compose up failed"; exit 1; }
-
-              docker compose up -d || { echo "docker compose up failed"; exit 1; }
-              docker network ls
-              docker network inspect app-network
+              DOCKER_IMAGE=$DOCKER_IMAGE docker compose up -d
+              
+              # Verify deployment
               docker ps
             EOF
   
