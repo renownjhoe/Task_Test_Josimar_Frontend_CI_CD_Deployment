@@ -6,11 +6,11 @@ on:
       - main
 
 env:
-  SERVER_HOST: ${{ secrets.EC2_HOST }}
-  SERVER_USER: ${{ secrets.EC2_USERNAME }}
-  DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
-  DOCKERHUB_PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD }}
-  IMAGE_NAME: ${{ secrets.DOCKERHUB_USERNAME }}/react-app # Replace with your Docker Hub image name
+  SERVER_HOST: "${{ secrets.EC2_HOST }}"
+  SERVER_USER: "${{ secrets.EC2_USERNAME }}"
+  DOCKERHUB_USERNAME: "${{ secrets.DOCKERHUB_USERNAME }}"
+  DOCKERHUB_PASSWORD: "${{ secrets.DOCKERHUB_PASSWORD }}"
+  IMAGE_NAME: "${{ secrets.DOCKERHUB_USERNAME }}"/react-app # Replace with your Docker Hub image name
 
 jobs:
   build:
@@ -23,14 +23,14 @@ jobs:
       - name: Add server public key to known_hosts
         run: |
           mkdir -p ~/.ssh
-          ssh-keyscan -H ${{ env.SERVER_HOST }} >> ~/.ssh/known_hosts
+          ssh-keyscan -H "${{ env.SERVER_HOST }}" >> ~/.ssh/known_hosts
           chmod 644 ~/.ssh/known_hosts
 
       - name: Log in to Docker Hub
         uses: docker/login-action@v2
         with:
-          username: ${{ env.DOCKERHUB_USERNAME }}
-          password: ${{ env.DOCKERHUB_PASSWORD }}
+          username: "${{ env.DOCKERHUB_USERNAME }}"
+          password: "${{ env.DOCKERHUB_PASSWORD }}"
 
       - name: Set up SSH key
         run: |
@@ -42,12 +42,12 @@ jobs:
 
       - name: Build and push Docker image
         run: |
-          docker build -t ${{ env.IMAGE_NAME }}:${{ env.COMMIT_ID }} .
-          docker push ${{ env.IMAGE_NAME }}:${{ env.COMMIT_ID }}
+          docker build -t "${{ env.IMAGE_NAME }}":"${{ env.COMMIT_ID }}" .
+          docker push "${{ env.IMAGE_NAME }}":"${{ env.COMMIT_ID }}"
 
       - name: Clean up old Docker containers
         run: |
-          ssh -T -i private_key.pem ${{ env.SERVER_USER }}@${{ env.SERVER_HOST }} << 'EOF'
+          ssh -T -i private_key.pem "${{ env.SERVER_USER }}"@"${{ env.SERVER_HOST }}" << 'EOF'
             if ! command -v docker &> /dev/null
             then
               echo "Docker could not be found, installing Docker..."
@@ -65,9 +65,9 @@ jobs:
       # Step 7: Build and Push New Docker Image
       - name: Build and Push New Docker Image
         run: |
-          docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/php-app:${{ env.COMMIT_ID }} -t ${{ secrets.DOCKERHUB_USERNAME }}/php-app:latest .
-          docker push ${{ secrets.DOCKERHUB_USERNAME }}/php-app:${{ env.COMMIT_ID }}
-          docker push ${{ secrets.DOCKERHUB_USERNAME }}/php-app:latest
+          docker build -t "${{ secrets.DOCKERHUB_USERNAME }}"/react-app:"${{ env.COMMIT_ID }}" -t "${{ secrets.DOCKERHUB_USERNAME }}"/react-app:latest .
+          docker push "${{ secrets.DOCKERHUB_USERNAME }}"/react-app:"${{ env.COMMIT_ID }}"
+          docker push "${{ secrets.DOCKERHUB_USERNAME }}"/react-app:latest
 
 
       - name: Deploy to EC2
