@@ -72,7 +72,7 @@ jobs:
 
       - name: Deploy to EC2
         run: |
-          ssh -T -i private_key.pem ${{ env.SERVER_USER }}@${{ env.SERVER_HOST }} << 'EOF'
+          ssh -T -i private_key.pem '${{ env.SERVER_USER }}'@'${{ env.SERVER_HOST }}' << 'EOF'
             set -x
             cd /home/ubuntu/Task_Test_Frontend_CI_CD_Deployment || mkdir -p /home/ubuntu/Task_Test_Frontend_CI_CD_Deployment
             cd /home/ubuntu/Task_Test_Frontend_CI_CD_Deployment
