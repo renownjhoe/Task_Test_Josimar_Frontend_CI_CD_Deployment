@@ -36,7 +36,7 @@ services:
     networks:
       - app-network
     depends_on:
-      - react-app # Corrected dependency
+      - react-app
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - /sys:/sys
