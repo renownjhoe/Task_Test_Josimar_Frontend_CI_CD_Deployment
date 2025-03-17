@@ -69,30 +69,21 @@ jobs:
             ssh -T -i private_key.pem ${{ env.SERVER_USER }}@${{ env.SERVER_HOST }} << EOF
               set -x
               export DOCKER_IMAGE="${{ env.IMAGE_NAME }}:${{ env.COMMIT_ID }}"
-              
-              # cd /home/ubuntu/Task_Test_Josimar_Frontend_CI_CD_Deployment
-              # git pull origin main
-              
-              # # Run with environment variable
-              # docker compose down || true
-              # DOCKER_IMAGE=$DOCKER_IMAGE docker compose up -d
-              
-              # # Verify deployment
-              # docker ps
-              set -x
+
               cd /home/ubuntu/react-app || mkdir -p /home/ubuntu/react-app
               cd /home/ubuntu/react-app
               cd /home/ubuntu/Task_Test_Josimar_Frontend_CI_CD_Deployment || mkdir -p /home/ubuntu/Task_Test_Josimar_Frontend_CI_CD_Deployment
               cd /home/ubuntu/Task_Test_Josimar_Frontend_CI_CD_Deployment
+
               git init || true
-              git remote add origin https://github.com/your-username/your-repo.git || true
               git remote add origin https://github.com/renownjhoe/Task_Test_Josimar_Frontend_CI_CD_Deployment.git || true
               git fetch || true
               git checkout main || true
               git pull origin main || true
+
               docker compose down || true
               docker compose up -d --build || { echo "docker compose up failed"; exit 1; }
-              # Replace build context with dockerhub image pull.
+
               docker compose up -d || { echo "docker compose up failed"; exit 1; }
               docker network ls
               docker network inspect app-network
