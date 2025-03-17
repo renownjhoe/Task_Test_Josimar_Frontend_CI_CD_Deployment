@@ -22,6 +22,9 @@ FROM nginx:alpine
 # Copy the build output to the Nginx html directory
 COPY --from=0 /app/build /usr/share/nginx/html
 
+# upgrade npm
+RUN npm upgrade -force
+
 # Expose port 80
 EXPOSE 80
 
