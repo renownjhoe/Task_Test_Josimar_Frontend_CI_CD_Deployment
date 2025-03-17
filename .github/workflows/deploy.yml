@@ -72,7 +72,7 @@ jobs:
               
               cd /home/ubuntu/react-app || mkdir -p /home/ubuntu/react-app
               cd /home/ubuntu/react-app
-              
+
               cd /home/ubuntu/Task_Test_Josimar_Frontend_CI_CD_Deployment || mkdir -p /home/ubuntu/Task_Test_Josimar_Frontend_CI_CD_Deployment
               cd /home/ubuntu/Task_Test_Josimar_Frontend_CI_CD_Deployment
 
@@ -99,3 +99,37 @@ jobs:
          if: always()
          run: |
            rm -f ~/.ssh/known_hosts
+
+    monitoring_check:
+      name: Verify Monitoring Services
+      runs-on: ubuntu-latest
+      needs: build
+      steps:
+        - name: Add server public key to known_hosts
+          run: |
+            mkdir -p ~/.ssh
+            ssh-keyscan -H ${{ env.SERVER_HOST }} >> ~/.ssh/known_hosts
+            chmod 644 ~/.ssh/known_hosts
+
+        - name: Set up SSH key
+          run: |
+            echo "${{ secrets.EC2_PEM_KEY }}" > private_key.pem
+            chmod 600 private_key.pem
+
+        - name: Check Prometheus Service
+          run: |
+            ssh -T -i private_key.pem ${{ env.SERVER_USER }}@${{ env.SERVER_HOST }} << 'EOF'
+              set -x
+              cd /home/ubuntu/Task_Test_Josimar_Backend
+              echo "Checking if Prometheus is running..."
+              docker logs prometheus || true
+            EOF
+
+        - name: Check Grafana Service
+          run: |
+            ssh -T -i private_key.pem ${{ env.SERVER_USER }}@${{ env.SERVER_HOST }} << 'EOF'
+              set -x
+              cd /home/ubuntu/Task_Test_Josimar_Backend
+              echo "Checking if Grafana is running..."
+              docker logs grafana || true
+            EOF
