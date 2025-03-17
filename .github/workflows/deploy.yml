@@ -66,6 +66,8 @@ jobs:
         run: |
           ssh -T -i private_key.pem ${{ env.SERVER_USER }}@${{ env.SERVER_HOST }} << 'EOF'
             set -x
+            export DOCKERHUB_USERNAME="${{ secrets.DOCKERHUB_USERNAME }}"
+            export COMMIT_ID="${{ env.COMMIT_ID }}"
             cd /home/ubuntu/Task_Test_Josimar_Frontend_CI_CD_Deployment || mkdir -p /home/ubuntu/Task_Test_Josimar_Frontend_CI_CD_Deployment
             cd /home/ubuntu/Task_Test_Josimar_Frontend_CI_CD_Deployment
             git init || true
@@ -90,17 +92,7 @@ jobs:
           rm -f ~/.ssh/known_hosts
         if: always()
 
-      - name: Maintenance Check
-        run: |
-          ssh -T -i private_key.pem ${{ env.SERVER_USER }}@${{ env.SERVER_HOST }} << 'EOF'
-            set -x
-            echo "Performing maintenance check..."
-            sleep 10
-            docker logs prometheus || true
-            docker logs grafana || true
-            echo "Maintenance check successful!"
-          EOF
-
+        
   monitoring_check:
     name: Verify Monitoring Services
     runs-on: ubuntu-latest
