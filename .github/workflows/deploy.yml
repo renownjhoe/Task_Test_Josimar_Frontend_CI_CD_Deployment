@@ -92,7 +92,7 @@ jobs:
           rm -f ~/.ssh/known_hosts
         if: always()
 
-        
+
   monitoring_check:
     name: Verify Monitoring Services
     runs-on: ubuntu-latest
