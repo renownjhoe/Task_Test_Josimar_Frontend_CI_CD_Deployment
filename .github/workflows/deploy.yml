@@ -1,0 +1,52 @@
+name: Deploy React App
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up SSH key
+        run: |
+          echo "${{ secrets.EC2_KEY_PAIR_PEM }}" > private_key.pem
+          chmod 600 private_key.pem
+
+      - name: Add server public key to known_hosts
+        run: |
+          mkdir -p ~/.ssh
+          ssh-keyscan -H ${{ secrets.EC2_PUBLIC_IP }} >> ~/.ssh/known_hosts
+          chmod 644 ~/.ssh/known_hosts
+
+      - name: Deploy to EC2
+        run: |
+          ssh -T -i private_key.pem ${{ secrets.EC2_USERNAME }}@${{ secrets.EC2_PUBLIC_IP }} << 'EOF'
+            set -x
+            cd /home/ubuntu/react-app || mkdir -p /home/ubuntu/react-app
+            cd /home/ubuntu/react-app
+            git init || true
+            git remote add origin https://github.com/your-username/your-repo.git || true
+            git fetch || true
+            git checkout main || true
+            git pull origin main || true
+            docker compose down || true
+            docker compose up -d --build || { echo "docker compose up failed"; exit 1; }
+            docker network ls
+            docker network inspect app-network
+            docker ps
+          EOF
+
+      - name: Clean up SSH key
+        run: rm -f private_key.pem
+        if: always()
+
+      - name: Clean up known_hosts file
+        run: |
+          rm -f ~/.ssh/known_hosts
+        if: always()
